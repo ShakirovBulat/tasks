@@ -2,42 +2,66 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace Group321
 {
     class Program
     {
+        delegate void MessageDelegate(string message);
+
         static void Main(string[] args)
         {
-            Task task1 = new Task(()=>
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine( "#" );
-                    Thread.Sleep(500);
-                }
-            }
-            );
-            Task task2 = new Task(() =>
-            {
-                for (int i = 10; i < 20; i++)
-                {
-                    Console.WriteLine( "*" );
-                    Thread.Sleep(500);
-                }
-            }
-            );
-            task1.Start();
-            task1.Wait();
-            task2.Start();
+            int[] array = new int[10];
+            Task<int[]> taskGen = new Task<int[]>(() => Generation(array));
+            Task tt3 = new Task(() => Summ(array));
+
+            Task<int[]> task2 = taskGen.ContinueWith(doublearr => doubleArray(doublearr.Result));
+            taskGen.Start();
+
             task2.Wait();
-        }
-        static void Sum()
-        { 
+            Task<int[]> task3 = new Task<int[]>(() => Ss(array));
+
 
         }
-        static void Mul()
+
+        static int[] Generation(int[] array)
         {
-
+            Random rnd = new Random();
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = rnd.Next(2);
+                Console.Write(array[i] + " ");
+            }
+            return array;
         }
+        static int[] Ss(int[] array)
+        {
+            int buff = 0;
+            foreach (var item in task2.Result)
+            {
+                buff += item;
+            }
+            Console.WriteLine(buff);
+        }
+
+        static void Summ(int[] array)
+        {
+            int summ = 0;
+            foreach (var item in array)
+            {
+                summ += item;
+            }
+            Console.WriteLine();
+            Console.WriteLine("summ" + summ);
+        }
+
+        static int[] doubleArray(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] *= 2;
+            }
+            return array;
+        }
+
     }
 }
