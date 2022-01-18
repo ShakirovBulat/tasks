@@ -18,7 +18,12 @@ namespace Group321
             taskGen.Start();
 
             task2.Wait();
-            Task<int[]> task3 = new Task<int[]>(() => Ss(array));
+
+            taskGen.Wait();
+            Task<int[]> task3 = task2.ContinueWith(buffarr => BuffArray(buffarr.Result));
+            
+
+            task3.Wait();
 
 
         }
@@ -32,15 +37,6 @@ namespace Group321
                 Console.Write(array[i] + " ");
             }
             return array;
-        }
-        static int[] Ss(int[] array)
-        {
-            int buff = 0;
-            foreach (var item in task2.Result)
-            {
-                buff += item;
-            }
-            Console.WriteLine(buff);
         }
 
         static void Summ(int[] array)
@@ -60,6 +56,17 @@ namespace Group321
             {
                 array[i] *= 2;
             }
+            return array;
+        }
+        static int[] BuffArray(int[] array)
+        {
+            int buff = 0;
+            foreach (var item in array)
+            {
+                buff += item;
+            }
+            Console.WriteLine();
+            Console.WriteLine("Buff:" + buff);
             return array;
         }
 
